@@ -44,6 +44,7 @@ jobs:
           service: ${{ env.SERVICE_NAME }}
           region: ${{ env.RUN_REGION }}
           image: "${{ env.RUN_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}/${{ env.SERVICE_NAME }}:${{ github.sha }}"
+          flags: "--allow-unauthenticated"
 
       - name: "Use output"
         run: 'curl "${{ steps.deploy.outputs.url }}"'
