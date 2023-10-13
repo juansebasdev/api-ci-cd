@@ -78,7 +78,7 @@ class Person(BaseModel):
 
 @app.get('/')
 def home():
-    return {'Hello': 'World'}
+    return {"Hello": "World"}
 
 
 # Request and Response Body
