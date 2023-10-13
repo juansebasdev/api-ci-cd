@@ -43,7 +43,6 @@ jobs:
         with:
           service: ${{ env.SERVICE_NAME }}
           region: ${{ env.RUN_REGION }}
-          port: 8000
           image: "${{ env.RUN_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}/${{ env.SERVICE_NAME }}:${{ github.sha }}"
 
       - name: "Use output"
