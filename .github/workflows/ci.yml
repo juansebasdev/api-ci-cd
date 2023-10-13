@@ -1,0 +1,20 @@
+name: Test API
+
+on: [push]
+
+jobs:
+  run-tests:
+    name: Run API tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install requirements
+        run: |
+            pip install -r requirements.txt
+
+      - name: Testing
+        run: |
+          pytest
