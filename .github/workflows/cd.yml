@@ -34,6 +34,10 @@ jobs:
               run: |
                    gcloud config set project $PROJECT_ID
 
+            - name: login to registry
+              run: |
+                   gcloud auth configure-docker us-east4-docker.pkg.dev
+
             - name: Build
               run: |
                    gcloud builds submit -t us-east4-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA
