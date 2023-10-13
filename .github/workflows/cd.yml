@@ -27,14 +27,14 @@ jobs:
 
             - name: setup cloud sdk
               uses: google-github-actions/setup-gcloud@v1
-              with:
-                project_id: $PROJECT_ID
+                   
 
             - name: docker auth
               run: |
+                   gcloug config set project $PROJECT_ID
                    gcloud auth configure-docker us-east4-docker.pkg.dev
 
-                   - name: 'Build and push container'
-                   run: |-
-                     docker build -t "$RUN-REGION-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:${{ github.sha }}" .
-                     docker push "$RUN/REGION-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:${{ github.sha }}"
+            - name: 'Build and push container'
+              run: |-
+                   docker build -t "$RUN-REGION-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:${{ github.sha }}" .
+                   docker push "$RUN/REGION-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:${{ github.sha }}"
