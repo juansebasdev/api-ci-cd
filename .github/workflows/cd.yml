@@ -23,27 +23,27 @@ jobs:
         uses: google-github-actions/auth@v1
         with:
           service_account: ${{ secrets.SA_EMAIL }}
-          credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS}}
+          credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
       - name: setup cloud sdk
         uses: google-github-actions/setup-gcloud@v1
 
       - name: docker auth
         run: |
-          gcloud config set project $PROJECT_ID
+          gcloud config set project ${{ env.PROJECT_ID }}
           gcloud auth configure-docker us-east4-docker.pkg.dev
 
       - name: "Build and push container"
         run: |-
-          docker build -t "$RUN_REGION-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:${{ github.sha }}" .
-          docker push "$RUN_REGION-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:${{ github.sha }}"
+          docker build -t "${{ env.RUN_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}/${{ env.SERVICE_NAME }}:${{ github.sha }}" .
+          docker push "${{ env.RUN_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}/${{ env.SERVICE_NAME }}:${{ github.sha }}"
 
       - id: "deploy"
         uses: "google-github-actions/deploy-cloudrun@v1"
         with:
-          service: "$SERVICE_NAME"
-          region: "$RUN_REGION"
-          image: "${RUN_REGION}-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:${{ github.sha }}"
+          service: ${{ env.SERVICE_NAME }}
+          region: ${{ env.RUN_REGION }}
+          image: "${{ env.RUN_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}/${{ env.SERVICE_NAME }}:${{ github.sha }}"
 
       - name: "Use output"
         run: 'curl "${{ steps.deploy.outputs.url }}"'
