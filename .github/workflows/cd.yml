@@ -36,5 +36,5 @@ jobs:
 
             - name: 'Build and push container'
               run: |-
-                   docker build -t "$RUN-REGION-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:${{ github.sha }}" .
-                   docker push "$RUN/REGION-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:${{ github.sha }}"
+                   docker build -t "$RUN_REGION-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:${{ github.sha }}" .
+                   docker push "$RUN_REGION-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:${{ github.sha }}"
