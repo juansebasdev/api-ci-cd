@@ -38,3 +38,19 @@ jobs:
               run: |-
                    docker build -t "$RUN_REGION-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:${{ github.sha }}" .
                    docker push "$RUN_REGION-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:${{ github.sha }}"
+
+            - name: 'Create release name'
+              run: |-
+                   echo "RELEASE_NAME=$SERVICE_NAME-${GITHUB_SHA::7}-${GITHUB_RUN_NUMBER}" >> ${GITHUB_ENV}
+            
+            
+            - name: 'Create Cloud Deploy release'
+              uses: 'google-github-actions/create-cloud-deploy-release@v0'
+              with:
+                  delivery_pipeline: '$SERVICE_NAME'
+                  name: '${{ env.RELEASE_NAME }}'
+                  region: '$RUN_REGION'
+                  description: '${{ env.GITHUB_COMMIT_MSG }}'
+                  skaffold_file: 'config/skaffold.yaml'
+                  images: 'app=$RUN_REGION-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:${{ github.sha }}'
+                   
