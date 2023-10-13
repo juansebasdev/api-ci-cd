@@ -31,7 +31,7 @@ jobs:
 
             - name: docker auth
               run: |
-                   gcloug config set project $PROJECT_ID
+                   gcloud config set project $PROJECT_ID
                    gcloud auth configure-docker us-east4-docker.pkg.dev
 
             - name: 'Build and push container'
