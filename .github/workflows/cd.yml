@@ -1,56 +1,52 @@
 name: Build and Deploy to Cloud Run
 
 on:
-    push:
-        branches:
-            - main
+  push:
+    branches:
+      - main
 
 env:
-    PROJECT_ID: ${{ secrets.PROJECT_ID }}
-    RUN_REGION: us-east4
-    SERVICE_NAME: users
+  PROJECT_ID: ${{ secrets.PROJECT_ID }}
+  RUN_REGION: us-east4
+  SERVICE_NAME: users
 
 jobs:
-    setup-build-deploy:
-        name: Setup, Build and Deploy
-        runs-on: ubuntu-latest
+  setup-build-deploy:
+    name: Setup, Build and Deploy
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
-            - id: auth
-              uses: google-github-actions/auth@v1
-              with:
-                  service_account: ${{ secrets.SA_EMAIL }}
-                  credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS}}
+      - id: auth
+        uses: google-github-actions/auth@v1
+        with:
+          service_account: ${{ secrets.SA_EMAIL }}
+          credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS}}
 
-            - name: setup cloud sdk
-              uses: google-github-actions/setup-gcloud@v1
-                   
+      - name: setup cloud sdk
+        uses: google-github-actions/setup-gcloud@v1
 
-            - name: docker auth
-              run: |
-                   gcloud config set project $PROJECT_ID
-                   gcloud auth configure-docker us-east4-docker.pkg.dev
+      - name: docker auth
+        run: |
+          gcloud config set project $PROJECT_ID
+          gcloud auth configure-docker us-east4-docker.pkg.dev
 
-            - name: 'Build and push container'
-              run: |-
-                   docker build -t "$RUN_REGION-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:${{ github.sha }}" .
-                   docker push "$RUN_REGION-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:${{ github.sha }}"
+      - name: "Build and push container"
+        run: |-
+          docker build -t "$RUN_REGION-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:${{ github.sha }}" .
+          docker push "$RUN_REGION-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:${{ github.sha }}"
 
-            - name: 'Create release name'
-              run: |-
-                   echo "RELEASE_NAME=$SERVICE_NAME-${GITHUB_SHA::7}-${GITHUB_RUN_NUMBER}" >> ${GITHUB_ENV}
-            
-            
-            - name: 'Create Cloud Deploy release'
-              uses: 'google-github-actions/create-cloud-deploy-release@v0'
-              with:
-                  delivery_pipeline: '$SERVICE_NAME'
-                  name: '${{ env.RELEASE_NAME }}'
-                  region: '$RUN_REGION'
-                  description: '${{ env.GITHUB_COMMIT_MSG }}'
-                  skaffold_file: 'config/skaffold.yaml'
-                  images: 'app=$RUN_REGION-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:${{ github.sha }}'
-                   
+      - name: "Create release name"
+        run: |-
+          echo "RELEASE_NAME=$SERVICE_NAME-${GITHUB_SHA::7}-${GITHUB_RUN_NUMBER}" >> ${GITHUB_ENV}
+
+      - id: "deploy"
+        uses: "google-github-actions/deploy-cloudrun@v1"
+        with:
+          service: $SERVICE_NAME
+          image: "$RUN_REGION-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:${{ github.sha }}"
+
+      - name: "Use output"
+        run: 'curl "${{ steps.deploy.outputs.url }}"'
