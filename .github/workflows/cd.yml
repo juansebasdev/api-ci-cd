@@ -38,15 +38,12 @@ jobs:
           docker build -t "$RUN_REGION-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:${{ github.sha }}" .
           docker push "$RUN_REGION-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:${{ github.sha }}"
 
-      - name: "Create release name"
-        run: |-
-          echo "RELEASE_NAME=$SERVICE_NAME-${GITHUB_SHA::7}-${GITHUB_RUN_NUMBER}" >> ${GITHUB_ENV}
-
       - id: "deploy"
         uses: "google-github-actions/deploy-cloudrun@v1"
         with:
-          service: $SERVICE_NAME
-          image: "$RUN_REGION-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:${{ github.sha }}"
+          service: ${SERVICE_NAME}
+          region: ${RUN-REGION}
+          image: "${RUN_REGION}-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:${{ github.sha }}"
 
       - name: "Use output"
         run: 'curl "${{ steps.deploy.outputs.url }}"'
