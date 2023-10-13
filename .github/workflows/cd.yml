@@ -36,7 +36,7 @@ jobs:
 
             - name: login to registry
               run: |
-                   gcloud auth configure-docker us-east4-docker.pkg.dev
+                   gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://us-east4-docker.pkg.dev
 
             - name: Build
               run: |
