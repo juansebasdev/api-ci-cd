@@ -17,9 +17,9 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@v1
+              uses: actions/checkout@v2
 
-            - uses: GoogleCloudPlatform/github-actions/setup-gcloud@main
+            - uses: GoogleCloudPlatform/github-actions/setup-gcloud@v0
               with:
                   version: '275.0.0'
                   service_account_email: ${{ secrets.SA_EMAIL }}
