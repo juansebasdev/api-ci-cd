@@ -23,8 +23,8 @@ jobs:
               uses: google-github-actions/auth@v1
               with:
                   version: '416.0.0'
-                  service_account_email: ${{ secrets.SA_EMAIL }}
-                  service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS}}
+                  service_account: ${{ secrets.SA_EMAIL }}
+                  credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS}}
 
             - name: setup cloud sdk
               uses: google-github-actions/setup-gcloud@v1
